@@ -2,8 +2,14 @@ const { ApolloServer, gql } = require("apollo-server");
 const { buildFederatedSchema } = require("@apollo/federation");
 
 const typeDefs = gql`
-  type Review @key(fields: "id") {
+  interface Node {
     id: ID!
+    createdAt: String!
+  }
+
+  type Review implements Node @key(fields: "id") {
+    id: ID!
+    createdAt: String!
     body: String
     author: User @provides(fields: "username")
     product: Product
@@ -66,24 +72,28 @@ const usernames = [
 const reviews = [
   {
     id: "1",
+    createdAt: "2001",
     authorID: "1",
     product: { upc: "1" },
     body: "Love it!"
   },
   {
     id: "2",
+    createdAt: "2001",
     authorID: "1",
     product: { upc: "2" },
     body: "Too expensive."
   },
   {
     id: "3",
+    createdAt: "2001",
     authorID: "2",
     product: { upc: "3" },
     body: "Could be better."
   },
   {
     id: "4",
+    createdAt: "2001",
     authorID: "2",
     product: { upc: "1" },
     body: "Prefer something else."
