@@ -6,8 +6,14 @@ const typeDefs = gql`
     me: User
   }
 
-  type User @key(fields: "id") {
+  interface Node {
     id: ID!
+    createdAt: String!
+  }
+
+  type User implements Node @key(fields: "id") {
+    id: ID!
+    createdAt: String!
     name: String
     username: String
   }
@@ -17,22 +23,22 @@ const resolvers = {
   Query: {
     me() {
       return users[0];
-    }
+    },
   },
   User: {
     __resolveReference(object) {
-      return users.find(user => user.id === object.id);
-    }
-  }
+      return users.find((user) => user.id === object.id);
+    },
+  },
 };
 
 const server = new ApolloServer({
   schema: buildFederatedSchema([
     {
       typeDefs,
-      resolvers
-    }
-  ])
+      resolvers,
+    },
+  ]),
 });
 
 server.listen({ port: 4001 }).then(({ url }) => {
@@ -42,14 +48,14 @@ server.listen({ port: 4001 }).then(({ url }) => {
 const users = [
   {
     id: "1",
+    createdAt: "2001-01-01",
     name: "Ada Lovelace",
-    birthDate: "1815-12-10",
-    username: "@ada"
+    username: "@ada",
   },
   {
     id: "2",
+    createdAt: "2002-02-02",
     name: "Alan Turing",
-    birthDate: "1912-06-23",
-    username: "@complete"
-  }
+    username: "@complete",
+  },
 ];
