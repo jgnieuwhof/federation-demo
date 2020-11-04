@@ -2,12 +2,23 @@ const { ApolloServer, gql } = require("apollo-server");
 const { buildFederatedSchema } = require("@apollo/federation");
 
 const typeDefs = gql`
+  interface Node {
+    id: ID!
+    createdAt: String!
+  }
+
   extend type Query {
     me: User
   }
 
-  type User @key(fields: "id") {
+  interface CoreUser {
+    name: String
+    username: String
+  }
+
+  type User implements Node & CoreUser @key(fields: "id") {
     id: ID!
+    createdAt: String!
     name: String
     username: String
   }
@@ -42,12 +53,14 @@ server.listen({ port: 4001 }).then(({ url }) => {
 const users = [
   {
     id: "1",
+    createdAt: "2001",
     name: "Ada Lovelace",
     birthDate: "1815-12-10",
     username: "@ada"
   },
   {
     id: "2",
+    createdAt: "2001",
     name: "Alan Turing",
     birthDate: "1912-06-23",
     username: "@complete"
