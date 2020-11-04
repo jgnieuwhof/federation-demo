@@ -11,7 +11,12 @@ const typeDefs = gql`
     me: User
   }
 
-  type User implements Node @key(fields: "id") {
+  interface CoreUser {
+    name: String
+    username: String
+  }
+
+  type User implements Node & CoreUser @key(fields: "id") {
     id: ID!
     createdAt: String!
     name: String

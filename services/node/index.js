@@ -7,9 +7,16 @@ const typeDefs = gql`
     createdAt: String! @external
   }
 
-  extend type User implements Node {
+  interface CoreUser {
+    name: String
+    username: String
+  }
+
+  extend type User implements Node & CoreUser {
     id: ID! @external
     createdAt: String! @external
+    name: String @external
+    username: String @external
   }
 
   extend type Review implements Node {

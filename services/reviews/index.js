@@ -15,8 +15,14 @@ const typeDefs = gql`
     product: Product
   }
 
-  extend type User @key(fields: "id") {
+  interface CoreUser @extends @key(fields: "name") {
+    name: String @external
+    reviews: [Review]
+  }
+
+  extend type User implements CoreUser @key(fields: "id") {
     id: ID! @external
+    name: String @external
     username: String @external
     reviews: [Review]
   }
