@@ -1,5 +1,7 @@
 const { ApolloServer, gql } = require("apollo-server");
 const { buildFederatedSchema } = require("@apollo/federation");
+const assert = require('assert');
+const { GraphQLObjectType } = require("graphql");
 
 const typeDefs = gql`
   extend type Query {
@@ -26,13 +28,25 @@ const resolvers = {
   }
 };
 
+const schema = buildFederatedSchema([{ typeDefs, resolvers }]);
+
+const typeA = schema.getType('User');
+const typeB = new GraphQLObjectType(typeA.toConfig());
+
+// assertion passes
+assert.strictEqual(typeA.resolveReference, resolvers.User.__resolveReference);
+
+// assertion fails
+//
+// [start-service-accounts] AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+// [start-service-accounts] + actual - expected
+// [start-service-accounts]
+// [start-service-accounts] + undefined
+// [start-service-accounts] - [Function: __resolveReference]
+assert.strictEqual(typeB.resolveReference, resolvers.User.__resolveReference);
+
 const server = new ApolloServer({
-  schema: buildFederatedSchema([
-    {
-      typeDefs,
-      resolvers
-    }
-  ])
+  schema
 });
 
 server.listen({ port: 4001 }).then(({ url }) => {
